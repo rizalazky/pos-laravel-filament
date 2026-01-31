@@ -30,14 +30,17 @@ class SaleForm
         return $schema
             ->components([
                 //
-                TextInput::make('sound')
-                    ->reactive()
-                    ->afterContent(
-                        Action::make('generateSlug')
-                            ->actionJs(<<<'JS'
-                                new Audio('/sounds/'.$get('sound').'.mp3').play();
-                                JS)
-                    ),
+                // TextInput::make('sound')
+                //     ->reactive()
+                //     ->live()
+                //     ->extraAttributes([
+                //         'x-on:input' => "
+                //             if (\$el.value) {
+                //             console.log('test')
+                //                 new Audio('/sounds/' + \$el.value + '.wav').play()
+                //             }
+                //         ",
+                //     ]),
                 DatePicker::make('date')
                 ->required()
                 ->default(now()),
@@ -68,7 +71,7 @@ class SaleForm
                                 ->title('Produk tidak ditemukan')
                                 ->danger()
                                 ->send();
-                            $set('sound','error');
+                            // $set('sound','error');
                             return;
                         }
 
@@ -87,16 +90,38 @@ class SaleForm
                         if (! $productUnit) {
                             return;
                         }
+                        $availableStock = floor(
+                            $product->stock / $productUnit->conversion_rate
+                        );
 
                         if ($index !== false) {
                             // sudah ada → qty +1
+                             if ($items[$index]['quantity'] + 1 > $availableStock) {
+                                Notification::make()
+                                    ->title('Stok tidak mencukupi')
+                                    ->danger()
+                                    ->send();
+
+                                $set('sku', null);
+                                return;
+                            }
                             $items[$index]['quantity'] += 1;
                         } else {
+                            if ($availableStock < 1) {
+                                Notification::make()
+                                    ->title('Stok tidak mencukupi')
+                                    ->danger()
+                                    ->send();
+
+                                $set('sku', null);
+                                return;
+                            }
                             // belum ada → push baru
                             $items[] = [
                                 'product_id' => $product->id,
                                 'unit_id'    => $productUnit->unit_id,
                                 'quantity'   => 1,
+                                'stock'   => $availableStock,
                                 'price'      => $productUnit->sell_price ?? 0,
                             ];
                         }
@@ -141,17 +166,71 @@ class SaleForm
                                     ->pluck('unit.name', 'unit.id')
                                     ->toArray();
                             })
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                if (! $state) {
+                                    return;
+                                }
+
+                                $productId = $get('product_id');
+
+                                $product = Product::find($productId);
+
+                                $productUnit = ProductUnit::where('product_id', $productId)
+                                    ->where('unit_id', $state)
+                                    ->first();
+
+                                if (! $product || ! $productUnit) {
+                                    return;
+                                }
+
+                                // set harga jual
+                                $set('price', $productUnit->sell_price ?? 0);
+
+                                // 🔥 stok tersedia dalam unit terpilih
+                                $availableStock = floor(
+                                    $product->stock / $productUnit->conversion_rate
+                                );
+
+                                $set('stock', $availableStock);
+                            })
                             ->disabled(fn (Get $get) => ! $get('product_id'))
                             ->required(),
+
+
+                        Hidden::make('stock')
+                            ->live()
+                            ->reactive(),
 
                         TextInput::make('quantity')
                             ->numeric()
                             ->reactive()
+                            ->live(onBlur: false)
+                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
+
+                                $stock = $get('stock');
+
+                                if (! $state || $stock === null) {
+                                    return;
+                                }
+
+                                if ($state > $stock) {
+                                    Notification::make()
+                                        ->title('Stok tidak mencukupi')
+                                        ->danger()
+                                        ->send();
+
+                                    // rollback ke max stok
+                                    $set('quantity', $stock);
+                                }
+                            })
                             ->required(),
+
 
                         TextInput::make('price')
                             // ->mask(RawJs::make('$money($input)'))
                             ->numeric()
+                            ->live(onBlur: false)
                             ->reactive()
                             ->required(),
 

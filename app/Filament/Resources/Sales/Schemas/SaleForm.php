@@ -134,6 +134,18 @@ class SaleForm
                     ])
                     ->hint('Scan Product'),
 
+                Placeholder::make('total')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->reactive()
+                    ->live(onBlur : false)
+                    ->formatStateUsing(function (Get $get) {
+                        return collect($get('items') ?? [])
+                            ->sum(fn ($item) =>
+                                ($item['price'] ?? 0) * ($item['quantity'] ?? 0)
+                            );
+                    }),
+                
                 Repeater::make('items')
                     ->table([
                         TableColumn::make('Product'),
@@ -242,7 +254,7 @@ class SaleForm
                     ->defaultItems(0)
                     ->columns(5)
                     ->columnSpanFull()
-                    ->required(),
+                    ->required()
             ]);
     }
 }

@@ -7,6 +7,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
 
 class Pos extends Page
 {
@@ -33,21 +34,15 @@ class Pos extends Page
         ];
     }
 
-    // protected function getHeaderActions(): array
-    // {
-    //     return [
-    //         Action::make('edit')
-    //             ->url(route('posts.edit', ['post' => $this->post])),
-    //         Action::make('delete')
-    //             ->requiresConfirmation()
-    //             ->action(fn () => $this->post->delete()),
-    //     ];
-    // }
+    
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            
+            TextInput::make('name')
+                ->label('Name')
+                ->required()
+                ->maxLength(255),
         ]);
     }
 }

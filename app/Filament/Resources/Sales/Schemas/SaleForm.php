@@ -46,7 +46,8 @@ class SaleForm
                 ->default(now()),
 
                 TextInput::make('invoice_number')
-                    ->required()
+                    ->disabled()
+                    ->placeholder('AUTO GENERATED')
                     ->unique(ignoreRecord: true),
 
                 Textarea::make('note')

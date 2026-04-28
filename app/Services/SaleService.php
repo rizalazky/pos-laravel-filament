@@ -36,7 +36,7 @@ class SaleService
 
             $sale = Sale::create([
                 'date'           => $data['date'],
-                'invoice_number' => $data['invoice_number'],
+                'invoice_number' => 'INV-' . now()->format('YmdHis'),
                 'customer_id'    => $data['customer_id'] ?? null,
                 'note'           => $data['note'] ?? null,
                 'total'          => 0,

@@ -52,7 +52,14 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])->navigationGroups([
+                'Catalog',
+                'Sales',
+                'Purchasing',
+                'Reports',
+                'Settings',
             ])
+            ->sidebarCollapsibleOnDesktop()
             ->authMiddleware([
                 Authenticate::class,
             ]);

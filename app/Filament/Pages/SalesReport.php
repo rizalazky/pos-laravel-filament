@@ -17,7 +17,7 @@ use Filament\Forms\Components\DatePicker;
 class SalesReport extends Page
 {
     protected string $view = 'filament.pages.sales-report';
-    protected static ?string $title = 'POS';
+    // protected static ?string $title = 'POS';
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
     protected static ?string $navigationLabel = 'Sales Report';
     protected static string|UnitEnum|null $navigationGroup = 'Reports';

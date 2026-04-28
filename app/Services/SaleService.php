@@ -17,9 +17,11 @@ class SaleService
             return 1;
         }
 
+        // dd($unitId);
         $unit = ProductUnit::where('product_id', $product->id)
             ->where('unit_id', $unitId)
             ->first();
+        
 
         if (! $unit) {
             throw new Exception('Conversion rate not found.');

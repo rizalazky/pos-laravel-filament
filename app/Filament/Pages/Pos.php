@@ -8,6 +8,10 @@ use Filament\Actions\Action;
 use Filament\Support\Enums\Width;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
+use App\Models\Product;
+use App\Services\SaleService;
+use Illuminate\Support\Str;
+use Filament\Notifications\Notification;
 
 class Pos extends Page
 {
@@ -18,31 +22,134 @@ class Pos extends Page
 
     protected static ?string $navigationLabel = 'POS';
 
-    // protected static ?int $navigationSort = 1;
+    public $barcode = '';
+    public $cart = [];
+    public $payment = 0;
+    public $showPaymentModal = false;
 
-    // protected static ?string $navigationGroup = 'Transaction';
-    public function getMaxContentWidth(): Width
+    public function getMaxContentWidth(): ?string
     {
-        return Width::Full;
+        return 'full';
     }
 
-    public function getColumns(): int | array
+    public function addProduct($productId)
     {
-        return [
-            'md' => 4,
-            'xl' => 5,
+        $product = Product::with('baseUnit')->find($productId);
+
+        if (!$product) return;
+        if ($product->stock <= 0) {
+            Notification::make()
+                ->title('Stock tidak mencukupi')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        if (isset($this->cart[$productId])) {
+            $this->cart[$productId]['qty']++;
+        } else {
+            $this->cart[$productId] = [
+                'name' => $product->name,
+                'sell_price' => $product->baseUnit->sell_price,
+                'qty' => 1,
+                'stock' => $product->stock,
+            ];
+        }
+    }
+
+    public function scanBarcode()
+    {
+        $product = Product::where('sku', $this->barcode)->first();
+
+        if ($product) {
+            $this->addProduct($product->id);
+        }
+
+        $this->barcode = '';
+    }
+
+    public function increaseQty($id)
+    {
+        if ($this->cart[$id]['stock'] < $this->cart[$id]['qty'] + 1) {
+            Notification::make()
+                ->title('Stock tidak mencukupi')
+                ->danger()
+                ->send();
+            return;
+        }
+        $this->cart[$id]['qty']++;
+    }
+
+    public function decreaseQty($id)
+    {
+        if ($this->cart[$id]['qty'] > 1) {
+            $this->cart[$id]['qty']--;
+        }
+    }
+
+    public function removeItem($id)
+    {
+        unset($this->cart[$id]);
+    }
+
+    public function getSubtotalProperty()
+    {
+        return collect($this->cart)->sum(fn($item) => $item['sell_price'] * $item['qty']);
+    }
+
+    public function getChangeProperty()
+    {
+        return (float) $this->payment - $this->subtotal;
+    }
+
+    public function openPaymentModal()
+    {
+        if ($this->subtotal > 0) {
+            $this->showPaymentModal = true;
+        }
+    }
+
+    public function closePaymentModal()
+    {
+        $this->showPaymentModal = false;
+    }
+
+    public function processPayment()
+    {
+        if (empty($this->cart)) {
+            return;
+        }
+
+        if ($this->payment < $this->subtotal) {
+            return;
+        }
+
+        $items = collect($this->cart)->map(function ($item, $productId) {
+            $product = \App\Models\Product::with('baseUnit')->find($productId);
+            // dd($product);
+            return [
+                'product_id' => $productId,
+                'unit_id'    => $product->baseUnit->unit_id,
+                'quantity'   => $item['qty'],
+                'price'      => $item['sell_price'],
+            ];
+        })->values()->toArray();
+
+        $data = [
+            'date'           => now(),
+            'invoice_number' => 'INV-' . now()->format('YmdHis'),
+            'customer_id'    => null,
+            'note'           => null,
+            'items'          => $items,
         ];
-    }
 
-    
+        app(SaleService::class)->create($data);
 
-    public static function form(Schema $schema): Schema
-    {
-        return $schema->components([
-            TextInput::make('name')
-                ->label('Name')
-                ->required()
-                ->maxLength(255),
-        ]);
+        // Reset POS
+        $this->cart = [];
+        $this->payment = 0;
+        $this->showPaymentModal = false;
+
+        $this->dispatch('notify', type: 'success', message: 'Transaction success!');
     }
 }

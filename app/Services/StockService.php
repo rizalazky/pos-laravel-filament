@@ -125,9 +125,11 @@ class StockService
         Product $product,
         int $unitId,
         float $qty,
+        string $referenceType,
+        int $referenceId,
         ?string $note = null
     ): void {
-        DB::transaction(function () use ($product, $unitId, $qty, $note) {
+        DB::transaction(function () use ($product, $unitId, $qty, $referenceType, $referenceId, $note) {
             $rate = $this->getConversionRate($product, $unitId);
             $baseQty = $qty * $rate;
 
@@ -149,7 +151,8 @@ class StockService
                 'type'             => 'adjust',
                 'stock_before'     => $before,
                 'stock_after'      => $after,
-                'reference_type'   => 'adjustment',
+                'reference_type'   => $referenceType ? $referenceType : 'adjustment',
+                'reference_id'     => $referenceId ? $referenceId : null,
                 'note'             => $note,
                 'created_by'       => auth()->id(),
             ]);

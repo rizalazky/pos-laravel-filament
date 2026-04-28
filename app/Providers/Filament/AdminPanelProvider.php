@@ -56,6 +56,7 @@ class AdminPanelProvider extends PanelProvider
                 'Catalog',
                 'Sales',
                 'Purchasing',
+                'Inventory Management',
                 'Reports',
                 'Settings',
             ])

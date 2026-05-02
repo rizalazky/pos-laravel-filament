@@ -35,47 +35,6 @@ class ProductResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'product';
 
-    // public static function form(Schema $schema): Schema
-    // {
-    //     return $schema->schema([
-    //         TextInput::make('name')
-    //             ->required(),
-    //         TextInput::make('sku')
-    //             ->unique(ignoreRecord: true)
-    //             ->required(),
-
-    //         Select::make('category_id')
-    //             ->label('Category')
-    //             ->relationship('category', 'name')
-    //             ->required(),
-
-    //         Select::make('base_unit_id')
-    //             ->disabledOn('edit')
-    //             ->label('Base Unit')
-    //             ->options(
-    //                 Unit::query()
-    //                     ->pluck('name', 'id')
-    //             )
-    //             ->searchable()
-    //             ->required(),
-
-    //         TextInput::make('cost_price')
-    //             ->label('Cost Price (Base Unit)')
-    //             ->mask(RawJs::make('$money($input)'))
-    //             ->stripCharacters(',')
-    //             ->numeric()
-    //             ->default(0)
-    //             ->required(),
-
-    //         TextInput::make('sell_price')
-    //             ->label('Sell Price (Base Unit)')
-    //             ->mask(RawJs::make('$money($input)'))
-    //             ->stripCharacters(',')
-    //             ->numeric()
-    //             ->default(0)
-    //             ->required(),
-    //     ]);
-    // }
 
     public static function form(Schema $schema): Schema
     {
@@ -232,6 +191,7 @@ class ProductResource extends Resource
             'index' => ListProducts::route('/'),
             'create' => CreateProduct::route('/create'),
             'edit' => EditProduct::route('/{record}/edit'),
+            'barcode' => Pages\ProductBarcode::route('/barcode'),
         ];
     }
 }

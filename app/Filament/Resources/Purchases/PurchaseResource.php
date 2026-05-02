@@ -20,7 +20,7 @@ class PurchaseResource extends Resource
     protected static ?string $model = Purchase::class;
     protected static string|UnitEnum|null $navigationGroup = 'Purchasing';
     protected static ?int $navigationSort = 1;
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = "heroicon-o-clipboard-document-list";
 
     protected static ?string $recordTitleAttribute = 'purchase';
 

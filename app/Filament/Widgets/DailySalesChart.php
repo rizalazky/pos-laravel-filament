@@ -8,31 +8,22 @@ use App\Models\Sale;
 use Filament\Forms\Components\DatePicker;
 use Filament\Schemas\Schema;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 
 class DailySalesChart extends ChartWidget
 {
     // use InteractsWithPageFilters;
     protected ?string $heading = 'Daily Sales Chart';
     protected int | string | array $columnSpan = 'full';
-    use HasFiltersSchema;
+    use InteractsWithPageFilters;
 
     protected ?string $maxHeight = '300px';
-
-    public function filtersSchema(Schema $schema): Schema
-    {
-        return $schema->components([
-            DatePicker::make('startDate')
-                ->default(now()->subDays(30)),
-            DatePicker::make('endDate')
-                ->default(now()),
-        ]);
-    }
 
     
     protected function getData(): array
     {
-        $startDate = $this->filters['startDate'] ?? null;
-        $endDate = $this->filters['endDate'] ?? null;
+        $startDate = $this->pageFilters['startDate'] ?? null;
+        $endDate = $this->pageFilters['endDate'] ?? null;
 
         $data = Sale::selectRaw('date, SUM(total) as total')
             ->whereBetween('date', [$startDate, $endDate])

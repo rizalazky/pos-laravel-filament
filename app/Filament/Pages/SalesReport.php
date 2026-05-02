@@ -9,10 +9,10 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use Filament\Pages\Dashboard\Actions\FilterAction;
 use Filament\Pages\Dashboard\Concerns\HasFiltersAction;
-use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\DatePicker;
+use App\Filament\Widgets\DailySalesChart;
 
 class SalesReport extends Page
 {
@@ -28,44 +28,30 @@ class SalesReport extends Page
 
     use HasFiltersAction;
     
+    
     protected function getHeaderActions(): array
     {
         return [
             FilterAction::make()
                 ->schema([
-                    DatePicker::make('startDate')
-                        ->default(now()->startOfMonth()),
-
+                    DatePicker::make('startDate'),
                     DatePicker::make('endDate')
-                        ->default(now()),
-                ])
-                ->action(function (array $data) {
-                    $this->startDate = $data['startDate'];
-                    $this->endDate = $data['endDate'];
-                }),
+                ]),
         ];
     }
 
-    // protected function getHeaderWidgets(): array
-    // {
-    //     return [
-    //        \App\Filament\Widgets\DailySalesChart::class,
-    //     ];
-    // }
-
-    protected function getWidgets(): array
+    protected function getHeaderWidgets(): array
     {
         return [
-            \App\Filament\Widgets\DailySalesChart::class,
+           DailySalesChart::class,
         ];
     }
 
-    public function mount()
-    {
-        $this->startDate = now()->startOfMonth()->toDateString();
-        $this->endDate = now()->toDateString();
-    }
+    
+    
 
+
+   
     public function getTotalSalesProperty()
     {
         return Sale::whereBetween('date', [$this->startDate, $this->endDate])
@@ -85,6 +71,8 @@ class SalesReport extends Page
             })
             ->sum('base_quantity');
     }
+
+    
 
     public function getDailySalesProperty()
     {

@@ -19,7 +19,7 @@ class StockOpnameResource extends Resource
 {
     protected static ?string $model = StockOpname::class;
     protected static string|UnitEnum|null $navigationGroup = 'Inventory Management';
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = "heroicon-o-clipboard-document-check";
 
     protected static ?string $recordTitleAttribute = 'Stock Opname';
     protected static ?string $navigationLabel = 'Stock Opname';

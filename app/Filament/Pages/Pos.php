@@ -26,6 +26,20 @@ class Pos extends Page
     public $cart = [];
     public $payment = 0;
     public $showPaymentModal = false;
+    public $paymentFormatted = '';
+
+    public function updatedPaymentFormatted($value)
+    {
+        // ambil angka saja
+        $numeric = preg_replace('/[^0-9]/', '', $value);
+
+        $this->payment = (int) $numeric;
+
+        // format ulang ke rupiah
+        $this->paymentFormatted = $numeric
+            ? number_format($numeric)
+            : '';
+    }
 
     public function getMaxContentWidth(): ?string
     {
@@ -105,13 +119,13 @@ class Pos extends Page
     public function openPaymentModal()
     {
         if ($this->subtotal > 0) {
-            $this->showPaymentModal = true;
+            $this->dispatch('open-modal', id: 'edit-user');
         }
     }
 
     public function closePaymentModal()
     {
-        $this->showPaymentModal = false;
+        $this->dispatch('hide-modal', id: 'edit-user');
     }
 
     public function processPayment()

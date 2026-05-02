@@ -82,52 +82,65 @@
         </div>
     </div>
 
-    {{-- ================= PAYMENT MODAL ================= --}}
-    @if($showPaymentModal)
-        <div class="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-            <div class="bg-white p-6 rounded shadow w-96 space-y-4">
+    <x-filament::modal id="edit-user">
+        <x-slot name="heading">
+            Payment
+        </x-slot>
 
-                <h2 class="text-lg font-bold">Payment</h2>
+        <label class="text-sm font-medium text-gray-700">
+            Subtotal
+        </label>
+        <x-filament::input.wrapper>
+            <x-slot name="label">
+                Payment
+            </x-slot>
+            <x-slot name="prefix">
+               Rp
+            </x-slot>
+            <x-filament::input
+                type="text"
+                :value="number_format($this->subtotal)"
+                readonly
+                label="Subtotal"
+            />
+        </x-filament::input.wrapper>
+        <label class="text-sm font-medium text-gray-700">
+            Payment
+        </label>
+        <x-filament::input.wrapper>
+            <x-slot name="prefix">
+                Rp
+            </x-slot>
 
-                <div>
-                    <div class="text-sm text-gray-500">Subtotal</div>
-                    <div class="text-xl font-semibold">
-                        Rp {{ number_format($this->subtotal) }}
-                    </div>
-                </div>
+            <x-filament::input
+                type="text"
+                wire:model.live="paymentFormatted"
+                placeholder="Input payment amount"
+            />
+        </x-filament::input.wrapper>
+        <label class="text-sm font-medium text-gray-700">
+            Change
+        </label>
+        <x-filament::input.wrapper>
+            
+            <x-slot name="prefix">
+               Rp
+            </x-slot>
+            <x-filament::input
+                type="text"
+                :value="number_format($this->change)"
+                readonly
+            />
+        </x-filament::input.wrapper>
 
-                <input
-                    type="number"
-                    wire:model.lazy="payment"
-                    placeholder="Input payment amount"
-                    class="w-full border rounded p-2"
-                />
-
-                <div>
-                    <div class="text-sm text-gray-500">Change</div>
-                    <div class="text-lg font-bold text-green-600">
-                        Rp {{ number_format($this->change) }}
-                    </div>
-                </div>
-
-                <div class="flex justify-end gap-3">
-                    <button
-                        wire:click="closePaymentModal"
-                        class="px-4 py-2 border rounded"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        class="px-4 py-2 bg-primary-600 text-white rounded"
-                        wire:click="processPayment"
-                    >
-                        Confirm Payment
-                    </button>
-                </div>
-
+        <x-slot name="footerActions">
+            <div class="flex justify-end">
+                <x-filament::button wire:click="processPayment">
+                    Confirm Payment
+                </x-filament::button>
             </div>
-        </div>
-    @endif
+        </x-slot>
+    </x-filament::modal>
+
 
 </x-filament-panels::page>

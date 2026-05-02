@@ -35,8 +35,8 @@ class ProductsTable
                     ->label('Stock')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('Default Unit')
-                    ->label('Default Unit')
+                TextColumn::make('Unit')
+                    ->label('Unit')
                     ->getStateUsing(function ($record) {
                         $baseUnit = $record->units()->where('is_base', true)->first();
                         return $baseUnit ? $baseUnit->unit->name : '-';

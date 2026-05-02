@@ -49,10 +49,6 @@ class ProductResource extends Resource
                 // TAB 2
                 Tabs\Tab::make('Units & Price')
                     ->schema(self::unitSchema()),
-
-                // // TAB 3
-                // Tabs\Tab::make('Variants')
-                //     ->schema(self::variantSchema()),
             ]),
         ])->columns(1);
     }
@@ -72,6 +68,7 @@ class ProductResource extends Resource
 
             Select::make('parent_id')
                 ->relationship('parent', 'name')
+                ->hidden()
                 ->default(request()->get('parent_id')),
                 // ->disabled()
                 // ->visible(fn () => request()->has('parent_id')),
@@ -91,9 +88,10 @@ class ProductResource extends Resource
     protected static function unitSchema(): array
     {
         return [
-            Repeater::make('units')  
+            Repeater::make('units')
+                ->hiddenLabel()
                 ->relationship()
-                ->table([
+                ->schema([
                     TableColumn::make('Unit'),
                     TableColumn::make('Conversion Rate'),
                     TableColumn::make('Cost Price'),
@@ -107,6 +105,7 @@ class ProductResource extends Resource
 
                     TextInput::make('conversion_rate')
                         ->numeric()
+                        ->hidden()
                         ->default(1)
                         ->required(),
 
@@ -124,52 +123,18 @@ class ProductResource extends Resource
 
                     Toggle::make('is_base')
                         // ->disabled()
-                        ->default(false), // true on create, false on edit
+                        ->hidden()
+                        ->default(true), // true on create, false on edit
                 ])
                 ->minItems(1)
+                ->maxItems(1)
+                ->addable(false)
+                ->deletable(false)
                 ->required(),
         ];
     }
 
-    protected static function variantSchema(): array
-    {
-        return [
-            Repeater::make('variants')
-                ->relationship()
-                ->schema([
-                    TextInput::make('name')
-                        ->required(),
-
-                    TextInput::make('sku')
-                        ->required(),
-
-                    Repeater::make('units')
-                        ->relationship()
-                        ->schema([
-                            Select::make('unit_id')
-                                ->relationship('unit', 'name')
-                                ->required(),
-
-                            TextInput::make('conversion_rate')
-                                ->numeric()
-                                ->required(),
-
-                            TextInput::make('cost_price')
-                                ->numeric()
-                                ->required(),
-
-                            TextInput::make('sell_price')
-                                ->numeric()
-                                ->required(),
-
-                            Toggle::make('is_base')
-                                ->default(false),
-                        ])
-                        ->minItems(1),
-                ])
-                ->collapsed(),
-        ];
-    }
+    
 
 
     public static function table(Table $table): Table

@@ -65,7 +65,7 @@ class VariantsRelationManager extends RelationManager
         Model $ownerRecord,
         string $pageClass
     ): bool {
-        return is_null($ownerRecord->parent_id);
+        return $ownerRecord->parent_id != null;
     }
 
     // public function form(Schema $schema): Schema

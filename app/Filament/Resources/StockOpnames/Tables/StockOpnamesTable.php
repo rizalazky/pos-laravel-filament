@@ -23,6 +23,7 @@ class StockOpnamesTable
                 TextColumn::make('note')->label('Note'),
                 TextColumn::make('status')->label('Status'),
             ])
+            ->defaultSort('date', direction: 'desc')
             ->filters([
                 //
             ])

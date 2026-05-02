@@ -22,6 +22,7 @@ class PurchasesTable
                 TextColumn::make('total')->money('idr', true)->sortable(),
                 TextColumn::make('note')->sortable(),
             ])
+            ->defaultSort('date', direction: 'desc')
             ->filters([
                 //
             ])

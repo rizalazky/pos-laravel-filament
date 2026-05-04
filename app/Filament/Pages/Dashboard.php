@@ -8,6 +8,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Pages\Dashboard\Actions\FilterAction;
 use Filament\Pages\Dashboard\Concerns\HasFiltersAction;
+use Carbon\Carbon;
 
 class Dashboard extends BaseDashboard
 {
@@ -18,8 +19,8 @@ class Dashboard extends BaseDashboard
         return [
             FilterAction::make()
                 ->schema([
-                    DatePicker::make('startDate'),
-                    DatePicker::make('endDate'),
+                    DatePicker::make('startDate')->default(Carbon::today()),
+                    DatePicker::make('endDate')->default(Carbon::today()),
                     // ...
                 ]),
         ];

@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\DatePicker;
 use App\Filament\Widgets\DailySalesChart;
+use Carbon\Carbon;
 
 class SalesReport extends Page
 {
@@ -34,8 +35,8 @@ class SalesReport extends Page
         return [
             FilterAction::make()
                 ->schema([
-                    DatePicker::make('startDate'),
-                    DatePicker::make('endDate')
+                    DatePicker::make('startDate')->default(Carbon::today()),
+                    DatePicker::make('endDate')->default(Carbon::today())
                 ]),
         ];
     }

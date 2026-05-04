@@ -9,11 +9,13 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Schemas\Schema;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Carbon\Carbon;
 
 class DailySalesChart extends ChartWidget
 {
     // use InteractsWithPageFilters;
-    protected ?string $heading = 'Daily Sales Chart';
+    protected static ?int $sort = 2;
+    protected ?string $heading = 'Sales Chart';
     protected int | string | array $columnSpan = 'full';
     use InteractsWithPageFilters;
 
@@ -22,8 +24,8 @@ class DailySalesChart extends ChartWidget
     
     protected function getData(): array
     {
-        $startDate = $this->pageFilters['startDate'] ?? null;
-        $endDate = $this->pageFilters['endDate'] ?? null;
+        $startDate = $this->pageFilters['startDate'] ?? Carbon::today();
+        $endDate = $this->pageFilters['endDate'] ?? Carbon::today();
 
         $data = Sale::selectRaw('date, SUM(total) as total')
             ->whereBetween('date', [$startDate, $endDate])

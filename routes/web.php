@@ -8,3 +8,5 @@ Route::get('/', function () {
 });
 Route::post('/print/barcode', [PrintController::class, 'barcode'])
     ->name('print.barcode');
+Route::post('/print/receipt', [PrintController::class, 'receipt'])
+    ->name('print.receipt');

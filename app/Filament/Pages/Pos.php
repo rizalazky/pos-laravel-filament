@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Services\SaleService;
 use Illuminate\Support\Str;
 use Filament\Notifications\Notification;
+use App\Filament\Resources\Sales\SaleResource;
 
 class Pos extends Page
 {
@@ -157,13 +158,16 @@ class Pos extends Page
             'items'          => $items,
         ];
 
-        app(SaleService::class)->create($data);
+        $sale = app(SaleService::class)->create($data);
 
         // Reset POS
         $this->cart = [];
         $this->payment = 0;
         $this->showPaymentModal = false;
 
-        $this->dispatch('notify', type: 'success', message: 'Transaction success!');
+        // $this->dispatch('notify', type: 'success', message: 'Transaction success!');
+        return redirect(
+            SaleResource::getUrl('receipt', ['record' => $sale->id])
+        );
     }
 }

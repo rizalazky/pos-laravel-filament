@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Sales\Pages;
 
 use App\Filament\Resources\Sales\SaleResource;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use App\Services\SaleService;
@@ -46,6 +47,10 @@ class EditSale extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('print_receipt')
+                ->label('Print Receipt')
+                ->icon('heroicon-o-printer')
+                ->url(fn () => $this->getResource()::getUrl('receipt',['record' => $this->record])),
             DeleteAction::make()
                 ->action(function(){
                     $record = $this->getRecord();

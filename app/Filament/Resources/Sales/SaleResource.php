@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Sales;
 use App\Filament\Resources\Sales\Pages\CreateSale;
 use App\Filament\Resources\Sales\Pages\EditSale;
 use App\Filament\Resources\Sales\Pages\ListSales;
+use App\Filament\Resources\Sales\Pages\SalesReceipt;
 use App\Filament\Resources\Sales\Schemas\SaleForm;
 use App\Filament\Resources\Sales\Tables\SalesTable;
 use App\Models\Sale;
@@ -47,6 +48,7 @@ class SaleResource extends Resource
             'index' => ListSales::route('/'),
             'create' => CreateSale::route('/create'),
             'edit' => EditSale::route('/{record}/edit'),
+            'receipt' => SalesReceipt::route('/{record}/printreceipt')
         ];
     }
 }

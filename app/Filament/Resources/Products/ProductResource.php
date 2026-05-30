@@ -157,6 +157,7 @@ class ProductResource extends Resource
             'create' => CreateProduct::route('/create'),
             'edit' => EditProduct::route('/{record}/edit'),
             'barcode' => Pages\ProductBarcode::route('/barcode'),
+            'price-review' => Pages\ReviewPriceUpdate::route('/{record}/review-price-update'),
         ];
     }
 }

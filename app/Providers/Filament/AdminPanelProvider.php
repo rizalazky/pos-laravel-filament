@@ -60,6 +60,7 @@ class AdminPanelProvider extends PanelProvider
                 'Settings',
             ])
             ->sidebarCollapsibleOnDesktop()
+            ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
             ]);

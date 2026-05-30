@@ -14,6 +14,15 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+// use Filament\Notifications\Notification;
+
+// $recipient = auth()->user();
+
+// $recipient->notify(
+//     Notification::make()
+//         ->title('Saved successfully')
+//         ->toDatabase(),
+// );
 
 class PurchaseResource extends Resource
 {

@@ -16,7 +16,7 @@ class PurchaseService
 
             $purchase = Purchase::create([
                 'date'           => $data['date'],
-                'invoice_number' => $data['invoice_number'],
+                'invoice_number' => 'PO-' . now()->format('YmdHis'),
                 'supplier_id'    => $data['supplier_id'] ?? null,
                 'note'           => $data['note'] ?? null,
                 'total'          => 0,

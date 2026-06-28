@@ -49,6 +49,13 @@ class SaleForm
                     ->disabled()
                     ->placeholder('AUTO GENERATED')
                     ->unique(ignoreRecord: true),
+                
+                Select::make('customer_id')
+                    ->label('Pilih Customer / Pelanggan')
+                    ->relationship('customer', 'name')
+                    ->live()
+                    ->searchable()
+                    ->preload(),
 
                 Textarea::make('note')
                     ->columnSpanFull(),

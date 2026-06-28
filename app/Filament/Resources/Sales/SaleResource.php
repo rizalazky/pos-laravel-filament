@@ -21,9 +21,9 @@ class SaleResource extends Resource
     protected static ?string $model = Sale::class;
     protected static string|UnitEnum|null $navigationGroup = 'Sales';
     protected static ?int $navigationSort = 2;
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingCart;
     protected static ?string $navigationLabel = 'Orders';
-    protected static ?string $recordTitleAttribute = 'sale';
+    protected static ?string $recordTitleAttribute = 'invoice_number';
 
     public static function form(Schema $schema): Schema
     {

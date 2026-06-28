@@ -336,9 +336,10 @@ class Pos extends Page
         $paymentStatus = 'unpaid';
 
         try {
-            $totalVoucherDiscount = collect($this->appliedRewards)
-                ->where('reward_type', 'discount')
-                ->sum(fn($item) => $item['discount_value'] * $item['qty']);
+            // $totalVoucherDiscount = collect($this->appliedRewards)
+            //     ->where('reward_type', 'discount')
+            //     ->sum(fn($item) => $item['discount_value'] * $item['qty']);
+            $totalVoucherDiscount = 0;
             $payload = [
                 'outlet_id'    => auth()->user()->current_outlet_id,
                 'type'         => 'out', 
@@ -361,7 +362,7 @@ class Pos extends Page
 
                 'payment_method'   => $this->paymentMethod,
                 'payment_status'   => $paymentStatus,
-                'total_paid'       => (int) $this->cleanPaymentReceived - (float) $this->change,
+                'total_payment'       => (int) $this->cleanPaymentReceived,
             ];
 
             $saleService = app(SaleService::class);

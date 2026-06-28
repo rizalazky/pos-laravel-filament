@@ -13,6 +13,9 @@ class Sale extends Model
         'customer_id',
         'note',
         'total',
+        'discount',
+        'grand_total',
+        'total_payment',
         'created_by',
     ];
 

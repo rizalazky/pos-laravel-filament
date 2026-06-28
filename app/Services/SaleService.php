@@ -40,6 +40,7 @@ class SaleService
                 'customer_id'    => $data['customer_id'] ?? null,
                 'note'           => $data['note'] ?? null,
                 'total'          => 0,
+                'discount'       => $data['discount'] ?? 0,
                 'created_by'     => auth()->id(),
             ]);
 
@@ -76,7 +77,11 @@ class SaleService
                 );
             }
 
-            $sale->update(['total' => $total]);
+            $sale->update([
+                'total' => $total,
+                'grand_total' => $total - ($data['discount'] ?? 0),
+                'total_payment' => $data['total_payment']
+            ]);
 
             return $sale;
         });

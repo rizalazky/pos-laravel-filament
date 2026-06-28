@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\Print\BarcodePrintService;
 use App\Services\Print\ReceiptPrintService;
 use App\Models\Sale;
+use App\Models\Company;
 
 class PrintController extends Controller
 {
@@ -20,8 +21,9 @@ class PrintController extends Controller
     {
         $sale = Sale::with('items.product')
             ->findOrFail($request->sale_id);
+        $company = Company::first();
 
         return app(ReceiptPrintService::class)
-            ->handle($sale);
+            ->handle($sale,$company);
     }
 }

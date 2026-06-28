@@ -14,8 +14,9 @@
 <body>
 
 <div class="center">
-    <strong>My Store</strong><br>
-    Jl. Contoh No.1
+    <strong>{{ $company->name }}</strong><br>
+    {{ $company->address }}<br>
+    {{ $company->phone }}
 </div>
 
 <div class="line"></div>
@@ -26,11 +27,21 @@
 </div>
 
 <div class="line"></div>
+@if($sale->customer)
+    <div>
+        <span>Cust: {{ $sale->customer->name }}</span>
+    </div>
+@else
+    <div>
+        <span>Cust: Pelanggan Umum</span>
+    </div>
+@endif
+<div class="line"></div>
 
 @foreach($sale->items as $item)
     <div>{{ $item->product->name }}</div>
     <div>
-        {{ $item->quantity }} x {{ number_format($item->price) }}
+        {{ (int) $item->quantity }} x {{ number_format($item->price) }}
         <span style="float:right">
             {{ number_format($item->subtotal) }}
         </span>
@@ -38,18 +49,51 @@
 @endforeach
 
 <div class="line"></div>
+    <table style='width:100%;'>
+        <tr>
+            <td>Subtotal</td>
+            <td class="right">Rp {{ number_format($sale->total) }}</td>
+        </tr>
+        @if($sale->discount > 0)
+            <tr>
+                <td>Diskon</td>
+                <td class="right">-Rp {{ number_format($sale->discount) }}</td>
+            </tr>
+        @endif
 
-<div>
-    Total:
-    <span style="float:right">
-        {{ number_format($sale->total) }}
-    </span>
-</div>
+        
+        <tr class="font-bold">
+            <td>TOTAL</td>
+            <td class="right">Rp {{ number_format($sale->grand_total) }}</td>
+        </tr>
+        
+        @php
+            $totalBayar = $sale->total_payment;
+            $kembalian = $totalBayar - $sale->grand_total;
+        @endphp
+        <tr>
+            <td>Bayar (Cash)</td>
+            <td class="right">Rp {{ number_format($totalBayar) }}</td>
+        </tr>
+        
+        @if($kembalian > 0)
+            <tr>
+                <td>Kembalian</td>
+                <td class="right">Rp {{ number_format($kembalian) }}</td>
+            </tr>
+        @elseif($kembalian < 0)
+            {{-- Kalau bon / kurang bayar --}}
+            <tr class="font-bold" style="color: red;">
+                <td>Sisa Bon</td>
+                <td class="right">Rp {{ number_format(abs($kembalian)) }}</td>
+            </tr>
+        @endif
+    </table>
 
 <div class="line"></div>
 
 <div class="center">
-    Terima kasih 🙏
+    Terima kasih
 </div>
 
 </body>

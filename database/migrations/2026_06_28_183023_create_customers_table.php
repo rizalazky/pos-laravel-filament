@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('phone_number')->unique()->nullable();
-            $table->string('number_plate')->unique();
             $table->integer('points')->default(0);
             $table->timestamps();
         });

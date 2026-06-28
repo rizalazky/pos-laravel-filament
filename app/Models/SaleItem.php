@@ -14,6 +14,7 @@ class SaleItem extends Model
         'quantity',
         'conversion_rate',
         'base_quantity',
+        'cost_price',
         'price',
         'subtotal',
     ];

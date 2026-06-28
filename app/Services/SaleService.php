@@ -35,7 +35,7 @@ class SaleService
         return DB::transaction(function () use ($data) {
 
             $sale = Sale::create([
-                'date'           => $data['date'],
+                'date'           => now(),
                 'invoice_number' => 'INV-' . now()->format('YmdHis'),
                 'customer_id'    => $data['customer_id'] ?? null,
                 'note'           => $data['note'] ?? null,
@@ -61,6 +61,7 @@ class SaleService
                     'quantity'        => $item['quantity'],
                     'conversion_rate' => $rate,
                     'base_quantity'   => $baseQty,
+                    'cost_price'      => $item['cost_price'],
                     'price'           => $item['price'],
                     'subtotal'        => $subtotal,
                 ]);
@@ -117,6 +118,7 @@ class SaleService
                     'quantity'        => $item['quantity'],
                     'conversion_rate' => $rate,
                     'base_quantity'   => $baseQty,
+                    'cost_price'      => $product->baseUnit->cost_price,
                     'price'           => $item['price'],
                     'subtotal'        => $subtotal,
                 ]);

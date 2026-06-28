@@ -60,87 +60,87 @@ class SaleForm
                 Textarea::make('note')
                     ->columnSpanFull(),
 
-                TextInput::make('sku')
-                    ->label('Barcode Scan')
-                    ->autofocus()
-                    ->reactive()
-                    ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                // TextInput::make('sku')
+                //     ->label('Barcode Scan')
+                //     ->autofocus()
+                //     ->reactive()
+                //     ->afterStateUpdated(function ($state, Set $set, Get $get) {
 
-                        if (! $state) {
-                            return;
-                        }
+                //         if (! $state) {
+                //             return;
+                //         }
 
-                        $product = Product::where('sku', $state)->first();
+                //         $product = Product::where('sku', $state)->first();
 
-                        if (! $product) {
-                            // reset sku kalau ga ketemu
-                            $set('sku', null);
-                            Notification::make()
-                                ->title('Produk tidak ditemukan')
-                                ->danger()
-                                ->send();
-                            // $set('sound','error');
-                            return;
-                        }
+                //         if (! $product) {
+                //             // reset sku kalau ga ketemu
+                //             $set('sku', null);
+                //             Notification::make()
+                //                 ->title('Produk tidak ditemukan')
+                //                 ->danger()
+                //                 ->send();
+                //             // $set('sound','error');
+                //             return;
+                //         }
 
-                        $items = $get('items') ?? [];
+                //         $items = $get('items') ?? [];
 
-                        // cari apakah produk sudah ada di items
-                        $index = collect($items)->search(fn ($item) =>
-                            $item['product_id'] == $product->id
-                        );
+                //         // cari apakah produk sudah ada di items
+                //         $index = collect($items)->search(fn ($item) =>
+                //             $item['product_id'] == $product->id
+                //         );
 
-                        // ambil unit default (base / smallest)
-                        $productUnit = ProductUnit::where('product_id', $product->id)
-                            ->orderBy('conversion_rate') // paling kecil
-                            ->first();
+                //         // ambil unit default (base / smallest)
+                //         $productUnit = ProductUnit::where('product_id', $product->id)
+                //             ->orderBy('conversion_rate') // paling kecil
+                //             ->first();
 
-                        if (! $productUnit) {
-                            return;
-                        }
-                        $availableStock = floor(
-                            $product->stock / $productUnit->conversion_rate
-                        );
+                //         if (! $productUnit) {
+                //             return;
+                //         }
+                //         $availableStock = floor(
+                //             $product->stock / $productUnit->conversion_rate
+                //         );
 
-                        if ($index !== false) {
-                            // sudah ada → qty +1
-                             if ($items[$index]['quantity'] + 1 > $availableStock) {
-                                Notification::make()
-                                    ->title('Stok tidak mencukupi')
-                                    ->danger()
-                                    ->send();
+                //         if ($index !== false) {
+                //             // sudah ada → qty +1
+                //              if ($items[$index]['quantity'] + 1 > $availableStock) {
+                //                 Notification::make()
+                //                     ->title('Stok tidak mencukupi')
+                //                     ->danger()
+                //                     ->send();
 
-                                $set('sku', null);
-                                return;
-                            }
-                            $items[$index]['quantity'] += 1;
-                        } else {
-                            if ($availableStock < 1) {
-                                Notification::make()
-                                    ->title('Stok tidak mencukupi')
-                                    ->danger()
-                                    ->send();
+                //                 $set('sku', null);
+                //                 return;
+                //             }
+                //             $items[$index]['quantity'] += 1;
+                //         } else {
+                //             if ($availableStock < 1) {
+                //                 Notification::make()
+                //                     ->title('Stok tidak mencukupi')
+                //                     ->danger()
+                //                     ->send();
 
-                                $set('sku', null);
-                                return;
-                            }
-                            // belum ada → push baru
-                            $items[] = [
-                                'product_id' => $product->id,
-                                'unit_id'    => $productUnit->unit_id,
-                                'quantity'   => 1,
-                                'stock'   => $availableStock,
-                                'price'      => $productUnit->sell_price ?? 0,
-                            ];
-                        }
+                //                 $set('sku', null);
+                //                 return;
+                //             }
+                //             // belum ada → push baru
+                //             $items[] = [
+                //                 'product_id' => $product->id,
+                //                 'unit_id'    => $productUnit->unit_id,
+                //                 'quantity'   => 1,
+                //                 'stock'   => $availableStock,
+                //                 'price'      => $productUnit->sell_price ?? 0,
+                //             ];
+                //         }
 
-                        $set('items', $items);
-                        $set('sku', null); // fokus balik ke scan
-                    })
-                    ->extraInputAttributes([
-                        'inputmode' => 'none',
-                    ])
-                    ->hint('Scan Product'),
+                //         $set('items', $items);
+                //         $set('sku', null); // fokus balik ke scan
+                //     })
+                //     ->extraInputAttributes([
+                //         'inputmode' => 'none',
+                //     ])
+                //     ->hint('Scan Product'),
 
                 Placeholder::make('total')
                     ->disabled()
@@ -153,6 +153,37 @@ class SaleForm
                                 ($item['price'] ?? 0) * ($item['quantity'] ?? 0)
                             );
                     }),
+
+                TextInput::make('discount')
+                            // ->mask(RawJs::make('$money($input)'))
+                            ->numeric()
+                            ->live(onBlur: false)
+                            ->reactive()
+                            ->required(),
+
+                TextInput::make('grand_total')
+                            // ->mask(RawJs::make('$money($input)'))
+                            ->numeric()
+                            ->disabled()
+                            ->saved()
+                            ->live(onBlur: false)
+                            ->reactive()
+                            ->required(),
+                TextInput::make('total_payment')
+                            // ->mask(RawJs::make('$money($input)'))
+                            ->numeric()
+                            ->live(onBlur: false)
+                            ->reactive()
+                            ->required(),
+                TextInput::make('change')
+                            // ->mask(RawJs::make('$money($input)'))
+                            ->numeric()
+                            ->disabled()
+                            ->live(onBlur: false)
+                            ->reactive()
+                            ->formatStateUsing(function (Get $get) {
+                                return $get('total_payment') - $get('grand_total');
+                            }),
                 
                 Repeater::make('items')
                     ->table([

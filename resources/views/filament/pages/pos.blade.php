@@ -150,7 +150,7 @@
                             @if(!$customerId)
                                 <input type="text" 
                                     wire:model.live.debounce.300ms="customerSearch" 
-                                    placeholder="Cari nama, no HP, atau plat nomor..."
+                                    placeholder="Cari nama atau no HP..."
                                     class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
                                     autocomplete="off">
                                 
@@ -158,33 +158,12 @@
                                     <div class="absolute {{ $isFullscreen ?? false ? 'bottom-full mb-1' : 'top-full mt-1' }} z-50 w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto custom-scrollbar">
                                         @if(count($this->customerResults) > 0)
                                             @foreach($this->customerResults as $cust)
-                                                @php
-                                                    $keyword = strtolower($customerSearch);
-                                                    
-                                                    // Saring kendaraan yang hanya mengandung nomor plat atau tipe yang diketik kasir
-                                                    $filteredVehicles = $cust->vehicles->filter(function($vehicle) use ($keyword) {
-                                                        return str_contains(strtolower($vehicle->number_plate), $keyword) || 
-                                                            str_contains(strtolower($vehicle->vehicle_type), $keyword);
-                                                    });
-
-                                                    // FALLBACK UX: Jika kasir cari nama orang, otomatis $filteredVehicles kosong.
-                                                    // Jika kosong, kembalikan semua data kendaraan milik customer tersebut.
-                                                    $vehiclesToDisplay = $filteredVehicles->isEmpty() ? $cust->vehicles : $filteredVehicles;
-                                                @endphp
                                                 <button type="button" 
                                                         wire:click="selectCustomer({{ $cust->id }})"
                                                         class="w-full text-left px-4 py-2 hover:bg-amber-50 dark:hover:bg-amber-900/30 text-sm border-b border-gray-100 dark:border-gray-600 last:border-0 dark:text-white block focus:outline-none">
                                                     <div class="font-semibold text-gray-800 dark:text-gray-200">{{ $cust->name }}</div>
                                                     <div class="text-xs text-gray-500 dark:text-gray-400 flex justify-between mt-0.5">
                                                         <span>📞 {{ $cust->phone_number ?? '-' }}</span>
-                                                        
-                                                        @if($vehiclesToDisplay && $vehiclesToDisplay->isNotEmpty())
-                                                            <span class="text-amber-600 dark:text-amber-400 font-medium text-xs truncate max-w-[65%] text-right" title="{{ $vehiclesToDisplay->pluck('number_plate')->implode(', ') }}">
-                                                                🚗 {!! $vehiclesToDisplay->map(function($vehicle) {
-                                                                    return $vehicle->number_plate . ($vehicle->vehicle_type ? " (<span class='text-gray-400 dark:text-gray-500'>{$vehicle->vehicle_type}</span>)" : '');
-                                                                })->implode(', ') !!}
-                                                            </span>
-                                                        @endif
                                                     </div>
                                                 </button>
                                             @endforeach
@@ -313,7 +292,7 @@
                                     @if(!$customerId)
                                         <input type="text" 
                                             wire:model.live.debounce.300ms="customerSearch" 
-                                            placeholder="Cari nama, no HP, atau plat nomor..."
+                                            placeholder="Cari nama atau no HP..."
                                             class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
                                             autocomplete="off">
                                         
@@ -321,33 +300,13 @@
                                             <div class="absolute {{ $isFullscreen ?? false ? 'bottom-full mb-1' : 'top-full mt-1' }} z-50 w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto custom-scrollbar">
                                                 @if(count($this->customerResults) > 0)
                                                     @foreach($this->customerResults as $cust)
-                                                        @php
-                                                            $keyword = strtolower($customerSearch);
-                                                            
-                                                            // Saring kendaraan yang hanya mengandung nomor plat atau tipe yang diketik kasir
-                                                            $filteredVehicles = $cust->vehicles->filter(function($vehicle) use ($keyword) {
-                                                                return str_contains(strtolower($vehicle->number_plate), $keyword) || 
-                                                                    str_contains(strtolower($vehicle->vehicle_type), $keyword);
-                                                            });
-
-                                                            // FALLBACK UX: Jika kasir cari nama orang, otomatis $filteredVehicles kosong.
-                                                            // Jika kosong, kembalikan semua data kendaraan milik customer tersebut.
-                                                            $vehiclesToDisplay = $filteredVehicles->isEmpty() ? $cust->vehicles : $filteredVehicles;
-                                                        @endphp
+                                                        
                                                         <button type="button" 
                                                                 wire:click="selectCustomer({{ $cust->id }})"
                                                                 class="w-full text-left px-4 py-2 hover:bg-amber-50 dark:hover:bg-amber-900/30 text-sm border-b border-gray-100 dark:border-gray-600 last:border-0 dark:text-white block focus:outline-none">
                                                             <div class="font-semibold text-gray-800 dark:text-gray-200">{{ $cust->name }}</div>
                                                             <div class="text-xs text-gray-500 dark:text-gray-400 flex justify-between mt-0.5">
                                                                 <span>📞 {{ $cust->phone_number ?? '-' }}</span>
-                                                                
-                                                                @if($vehiclesToDisplay && $vehiclesToDisplay->isNotEmpty())
-                                                                    <span class="text-amber-600 dark:text-amber-400 font-medium text-xs truncate max-w-[65%] text-right" title="{{ $vehiclesToDisplay->pluck('number_plate')->implode(', ') }}">
-                                                                        🚗 {!! $vehiclesToDisplay->map(function($vehicle) {
-                                                                            return $vehicle->number_plate . ($vehicle->vehicle_type ? " (<span class='text-gray-400 dark:text-gray-500'>{$vehicle->vehicle_type}</span>)" : '');
-                                                                        })->implode(', ') !!}
-                                                                    </span>
-                                                                @endif
                                                             </div>
                                                         </button>
                                                     @endforeach
@@ -537,16 +496,7 @@
                             <input type="text" wire:model="newCustomerName" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Contoh: Budi Santoso" />
                             @error('newCustomerName') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
-                        <div>
-                            <label class="text-xs font-bold text-gray-400 dark:text-gray-500 block mb-1 uppercase">Plat Nomor <span class="text-rose-500">*</span></label>
-                            <input type="text" wire:model="newNumberPlate" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Plat Nomor Kendaran" />
-                            @error('newNumberPlate') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label class="text-xs font-bold text-gray-400 dark:text-gray-500 block mb-1 uppercase">Tipe Kendaraan <span class="text-rose-500">*</span></label>
-                            <input type="text" wire:model="newVehicleType" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Contoh: Avanza / Nmax / Beat" />
-                            @error('newVehicleType') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
-                        </div>
+                        
                         <div>
                             <label class="text-xs font-bold text-gray-400 dark:text-gray-500 block mb-1 uppercase">Nomor HP / WhatsApp <span class="text-rose-500">*</span></label>
                             <input type="text" wire:model="newCustomerPhone" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Contoh: 08123456xxx" />

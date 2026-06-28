@@ -197,8 +197,6 @@ class Pos extends Page
     {
         $this->newCustomerName = '';
         $this->newCustomerPhone = '';
-        $this->newNumberPlate = '';
-        $this->newVehicleType = '';
         $this->isCustomerModalOpen = true;
     }
 
@@ -206,14 +204,10 @@ class Pos extends Page
     {
         $this->validate([
             'newCustomerName' => 'required|min:3',
-            'newNumberPlate' => 'required',
-            'newVehicleType' => 'required',
             'newCustomerPhone' => 'required',
         ], [
             'newCustomerName.required' => 'Nama pelanggan tidak boleh kosong.',
             'newCustomerName.min' => 'Nama minimal terdiri dari 3 karakter.',
-            'newNumberPlate.required' => 'Plat Nomor tidak boleh kosong.',
-            'newVehicleType.required' => 'Tipe Kedaraan tidak boleh kosong.',
             'newCustomerPhone.required' => 'No HP tidak boleh kosong.',
         ]);
 
@@ -223,10 +217,6 @@ class Pos extends Page
             'points' => 0
         ]);
 
-        $newCustomer->vehicles()->create([
-            'number_plate' => $this->newNumberPlate,
-            'vehicle_type' => $this->newVehicleType, // Buka ini jika nanti mau tambah input Tipe Kendaraan
-        ]);
 
         // 👤 UX MAGIC: Langsung pasangkan data ke komponen seleksi aktif
         $this->customerId = $newCustomer->id;
@@ -254,22 +244,53 @@ class Pos extends Page
             return [];
         }
 
-        return \App\Models\Customer::with('vehicles') // Eager load relasi kendaraan jika ada
-            ->where(function($query) {
-                $query->where('name', 'like', '%' . $this->customerSearch . '%')
-                    ->orWhere('phone_number', 'like', $this->customerSearch . '%')
-                    ->orWhereHas('vehicles', function ($q) {
-                        $q->where('number_plate', 'like', '%' . $this->customerSearch . '%'); // Cek relasi ke table kendaraan
-                    });
-            })
+        return \App\Models\Customer::where('name', 'like', '%' . $this->customerSearch . '%')
+            ->orWhere('phone_number', 'like', $this->customerSearch . '%')
             ->take(10) // Batasi 10 data teratas demi kecepatan loading POS
             ->get();
+    }
+
+    public function selectCustomer($id)
+    {
+        $customer = \App\Models\Customer::find($id);
+        if ($customer) {
+            $this->customerId = $customer->id;
+            $this->selectedCustomerName = $customer->name;
+            $this->selectedCustomerPhone = $customer->phone_number ?? 'No HP (-)';
+            $this->customerSearch = ''; // Reset keyword pencarian
+            
+            $this->resetCustomerRewards();
+        }
+    }
+
+    // 👤 Method jika user ingin membatalkan/mengganti customer yang sudah dipilih
+    public function clearCustomer()
+    {
+        $this->customerId = null;
+        $this->selectedCustomerName = '';
+        $this->selectedCustomerPhone = '';
+        $this->customerSearch = '';
+        
+        $this->resetCustomerRewards();
     }
 
     public function updatedCustomerId($value)
     {
         // Tetap dipertahankan untuk mengantisipasi dependensi internal Filament jika ada
         $this->resetCustomerRewards();
+    }
+
+    private function resetCustomerRewards()
+    {
+        foreach ($this->cart as $key => $item) {
+            if (isset($item['is_reward_item']) && $item['is_reward_item'] === true) {
+                unset($this->cart[$key]);
+            }
+        }
+        $this->appliedRewards = [];
+        if (property_exists($this, 'rewardDiscountAmount')) {
+            $this->rewardDiscountAmount = 0;
+        }
     }
 
     public function updateQty($key, $operator)

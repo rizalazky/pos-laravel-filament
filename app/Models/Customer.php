@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
@@ -13,8 +13,8 @@ class Customer extends Model
         'points',
     ];
 
-    public function transaction() : BelongsTo
+    public function sales() : HasMany
     {
-        return $this->belongsTo(Sale::class, 'customer_id');
+        return $this->hasMany(Sale::class, 'customer_id');
     }
 }

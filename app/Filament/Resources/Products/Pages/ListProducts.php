@@ -6,6 +6,10 @@ use App\Filament\Resources\Products\ProductResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Actions\Action;
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\ImportAction;
+
+
 
 class ListProducts extends ListRecords
 {
@@ -19,6 +23,8 @@ class ListProducts extends ListRecords
                 ->label('Print Barcode')
                 ->icon('heroicon-o-printer')
                 ->url(fn () => ProductResource::getUrl('barcode')),
+            ImportAction::make()
+                ->importer(ProductImporter::class)
         ];
     }
 }

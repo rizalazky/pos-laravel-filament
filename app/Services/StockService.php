@@ -180,10 +180,16 @@ class StockService
                     continue;
                 }
 
-                // Balikin stok ke sebelum movement
-                $product->update([
-                    'stock' => $movement->stock_before,
-                ]);
+                $before = $product->stock;
+
+                // 🟢 KUNCI FORMULA LAWAN: Balikkan nilai base_quantity (dikali -1)
+                // Jika dulu stockOut nilainya negatif (misal -10.0000), dikali -1 jadi +10.0000 (Stok Masuk Kembali)
+                $reverseBaseQty = $movement->base_quantity;
+                
+                $after = $before + $reverseBaseQty;
+
+                // Update stok produk secara aman berdasarkan hitungan dinamis terbaru
+                $product->update(['stock' => $after]);
             }
 
             // Hapus movement lama (atau soft delete kalau mau)

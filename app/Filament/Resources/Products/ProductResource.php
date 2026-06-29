@@ -122,8 +122,9 @@ class ProductResource extends Resource
                         ->required(),
 
                     Toggle::make('is_base')
-                        // ->disabled()
-                        ->hidden()
+                        ->disabled()
+                        ->saved()
+                        // ->hidden()
                         ->default(true), // true on create, false on edit
                 ])
                 ->minItems(1)

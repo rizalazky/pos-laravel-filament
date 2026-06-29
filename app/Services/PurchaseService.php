@@ -19,6 +19,9 @@ class PurchaseService
                 'invoice_number' => 'PO-' . now()->format('YmdHis'),
                 'supplier_id'    => $data['supplier_id'] ?? null,
                 'note'           => $data['note'] ?? null,
+                'discount'       => $data['discount'] ?? null,
+                'total_paid'       => $data['total_paid'] ?? null,
+                'created_by'     => auth()->user()->id,
                 'total'          => 0,
             ]);
 
@@ -55,7 +58,12 @@ class PurchaseService
                 );
             }
 
-            $purchase->update(['total' => $total]);
+            $grandTotal = $total - $data['discount'];
+
+            $purchase->update([
+                'total' => $total,
+                'grand_total' => $grandTotal,
+            ]);
 
             return $purchase;
         });
@@ -76,6 +84,8 @@ class PurchaseService
             $purchase->update([
                 'date'        => $data['date'],
                 'supplier_id' => $data['supplier_id'] ?? null,
+                'discount' => $data['discount'] ?? 0,
+                'total_paid' => $data['total_paid'] ?? 0,
                 'note'        => $data['note'] ?? null,
             ]);
 
@@ -109,8 +119,14 @@ class PurchaseService
                     $purchase->id
                 );
             }
+            
 
-            $purchase->update(['total' => $total]);
+            $grandTotal = $total - $data['discount'];
+
+            $purchase->update([
+                'total' => $total,
+                'grand_total' => $grandTotal,
+            ]);
 
             return $purchase;
         });

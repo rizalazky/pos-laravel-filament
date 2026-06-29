@@ -186,7 +186,7 @@ class StockService
                 // Jika dulu stockOut nilainya negatif (misal -10.0000), dikali -1 jadi +10.0000 (Stok Masuk Kembali)
                 $reverseBaseQty = $movement->base_quantity;
                 
-                $after = $before + $reverseBaseQty;
+                $after = $movement->type == 'out' ? $before + $reverseBaseQty : $before - $reverseBaseQty;
 
                 // Update stok produk secara aman berdasarkan hitungan dinamis terbaru
                 $product->update(['stock' => $after]);

@@ -57,8 +57,7 @@ class SaleForm
                     ->searchable()
                     ->preload(),
 
-                Textarea::make('note')
-                    ->columnSpanFull(),
+                
 
                 // TextInput::make('sku')
                 //     ->label('Barcode Scan')
@@ -184,6 +183,9 @@ class SaleForm
                             ->formatStateUsing(function (Get $get) {
                                 return $get('total_payment') - $get('grand_total');
                             }),
+
+                Textarea::make('note')
+                    ->columnSpanFull(),
                 
                 Repeater::make('items')
                     ->table([

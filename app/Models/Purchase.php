@@ -16,6 +16,9 @@ class Purchase extends Model
         'status',
         'total',
         'note',
+        'discount',
+        'grand_total',
+        'total_paid',
     ];
 
     protected $casts = [

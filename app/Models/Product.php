@@ -15,6 +15,7 @@ class Product extends Model
         'category_id',
         'parent_id',
         'sku',
+        'image',
         'is_active',
         'stock'
     ];

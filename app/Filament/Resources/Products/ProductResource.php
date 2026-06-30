@@ -22,6 +22,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\FileUpload;
 
 
 class ProductResource extends Resource
@@ -33,7 +34,7 @@ class ProductResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon ="heroicon-o-archive-box";
 
-    protected static ?string $recordTitleAttribute = 'product';
+    protected static ?string $recordTitleAttribute = 'name';
 
 
     public static function form(Schema $schema): Schema
@@ -44,7 +45,7 @@ class ProductResource extends Resource
                 // TAB 1
                 Tabs\Tab::make('Product Info')
                     ->schema(self::productInfoSchema())
-                    ->columns(2),
+                    ->columns(3),
 
                 // TAB 2
                 Tabs\Tab::make('Units & Price')
@@ -62,6 +63,8 @@ class ProductResource extends Resource
         }
 
         return [
+            
+            
             TextInput::make('name')
                 ->required()
                 ->maxLength(255),
@@ -82,6 +85,22 @@ class ProductResource extends Resource
             TextInput::make('sku')
                 ->unique(ignoreRecord: true)
                 ->maxLength(100),
+            
+            FileUpload::make('image')
+                ->label('Product Image')
+                ->image()
+                ->directory('products')
+                ->disk('public')
+                ->visibility('public')
+                ->imageEditor()
+                ->imagePreviewHeight('200')
+                ->maxSize(2048)
+                ->acceptedFileTypes([
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp',
+                ])
+                ->columnSpanFull(),
         ];
     }
 

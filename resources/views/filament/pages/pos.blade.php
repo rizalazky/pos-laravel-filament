@@ -108,24 +108,43 @@
                     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                         
                         @forelse($this->products as $product)
-                            <div wire:click="addToCart({{ $product->id }})" 
-                                class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-amber-500 dark:hover:border-amber-500 cursor-pointer transition transform active:scale-95 flex flex-col justify-between h-40 group">
-                                
-                                <div>
-                                    <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 line-clamp-2 group-hover:text-amber-600 dark:group-hover:text-amber-400">
-                                        {{ $product->name }}
-                                    </h4>
-                                    <span class="text-xs text-gray-400 dark:text-gray-500 block mt-1">
-                                        SKU: {{ $product->sku ?? '-' }}
-                                    </span>
+                            <div wire:click="addToCart({{ $product->id }})"
+                                class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-amber-500 dark:hover:border-amber-500 cursor-pointer transition active:scale-95 overflow-hidden group">
+
+                                <div class="h-28 bg-gray-100 dark:bg-gray-700">
+                                    @if ($product->image)
+                                        <img
+                                            src="{{ Storage::url($product->image) }}"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 group-hover:scale-105 transition duration-300">
+                                            <x-heroicon-o-cube class="w-10 h-10 text-gray-400"/>
+                                        </div>
+                                    @endif
                                 </div>
 
-                                <div class="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-gray-700">
-                                    <span class="text-xs text-gray-400 dark:text-gray-500">Harga</span>
-                                    <span class="font-black text-xs md:text-sm text-amber-600 dark:text-amber-400">
-                                        Rp {{ number_format($product->baseUnit->sell_price) }}
-                                    </span>
+                                <div class="p-3 flex flex-col justify-between h-24">
+                                    <div>
+                                        <h4 class="font-semibold text-sm text-gray-800 dark:text-gray-200 line-clamp-2">
+                                            {{ $product->name }}
+                                        </h4>
+
+                                        <span class="text-xs text-gray-400">
+                                            SKU: {{ $product->sku ?? '-' }}
+                                        </span>
+                                    </div>
+
+                                    <div class="flex justify-between items-center mt-2">
+                                        <span class="text-xs text-gray-400">
+                                            Harga
+                                        </span>
+
+                                        <span class="font-bold text-amber-600 dark:text-amber-400">
+                                            Rp {{ number_format($product->baseUnit->sell_price) }}
+                                        </span>
+                                    </div>
                                 </div>
+
                             </div>
                         @empty
                             <div class="col-span-full bg-white dark:bg-gray-800 p-8 text-center text-gray-400 dark:text-gray-500 rounded-xl border border-gray-200 dark:border-gray-700">

@@ -100,6 +100,7 @@ class ProductResource extends Resource
                     'image/png',
                     'image/webp',
                 ])
+                ->panelLayout('integrated')
                 ->columnSpanFull(),
         ];
     }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage; // <--- ADD THIS LINE
 
 
 class Product extends Model
@@ -89,5 +90,25 @@ class Product extends Model
     public function isVariant(): bool
     {
         return ! is_null($this->parent_id);
+    }
+
+    protected static function booted()
+    {
+        static::updating(function ($product) {
+            if (
+                $product->isDirty('image') &&
+                $product->getOriginal('image')
+            ) {
+                Storage::disk('public')
+                    ->delete($product->getOriginal('image'));
+            }
+        });
+
+        static::deleting(function ($product) {
+            if ($product->image) {
+                Storage::disk('public')
+                    ->delete($product->image);
+            }
+        });
     }
 }

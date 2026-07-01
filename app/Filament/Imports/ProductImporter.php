@@ -94,8 +94,8 @@ class ProductImporter extends Importer
                 'unit_id' => $unit->id,
             ],
             [
-                'cost_price'      => $this->data['cost_price'],
-                'sell_price'      => $this->data['sell_price'],
+                'cost_price'      => $this->data['cost_price'] ?? 0,
+                'sell_price'      => $this->data['sell_price'] ?? 0,
                 'conversion_rate' => 1,
                 'is_base'         => true,
                 'is_default'      => true,

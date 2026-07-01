@@ -13,6 +13,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextInputColumn;
 
 class ItemsRelationManager extends RelationManager
 {
@@ -52,9 +53,11 @@ class ItemsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('product.name')->label('Product'),
                 TextColumn::make('system_stock'),
-                TextColumn::make('physical_stock'),
+                TextInputColumn::make('physical_stock')
+                    ->inputMode('numeric'),
 
                 TextColumn::make('difference')
+                    ->state(fn ($record) => $record->physical_stock - $record->system_stock)
                     ->color(fn ($state) =>
                         $state < 0 ? 'danger' :
                         ($state > 0 ? 'success' : 'gray')
@@ -67,7 +70,7 @@ class ItemsRelationManager extends RelationManager
                 CreateAction::make(),
             ])
             ->recordActions([
-                EditAction::make(),
+                // EditAction::make(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

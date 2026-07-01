@@ -9,6 +9,7 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Support\Number;
+use Illuminate\Validation\ValidationException;
 
 class ProductImporter extends Importer
 {
@@ -50,6 +51,11 @@ class ProductImporter extends Importer
 
     public function resolveRecord(): Product
     {
+        if (blank(trim($this->data['unit'] ?? ''))) {
+            throw ValidationException::withMessages([
+                'unit' => 'Unit tidak boleh kosong.',
+            ]);
+        }
         // 1. Cek Kategori: Jika nama sudah ada, ambil. Jika belum ada, buat baru otomatis.
         $category = Category::firstOrCreate([
             'name' => trim($this->data['category']),
@@ -68,16 +74,16 @@ class ProductImporter extends Importer
 
     protected function afterSave(): void
     {
-        // 4. Cek Unit: Jika nama sudah ada, ambil. Jika belum ada, buat baru otomatis.
-        if( !isset($this->data['unit']) || empty(trim($this->data['unit'])) ) {
-            // remove product if unit is empty, because we cannot save product without unit
-            $this->record->delete();
-            return; // Jika unit kosong, tidak perlu diproses
-        }
+       
+        // if( !isset($this->data['unit']) || empty(trim($this->data['unit'])) ) {
+        //     // remove product if unit is empty, because we cannot save product without unit
+        //     $this->record->delete();
+        //     return; // Jika unit kosong, tidak perlu diproses
+        // }
 
         // penghapusan units yang sudah ada untuk produk ini sebelum menambahkan unit baru
         $this->record->units()->delete();
-
+         // 4. Cek Unit: Jika nama sudah ada, ambil. Jika belum ada, buat baru otomatis.
         $unit = Unit::firstOrCreate([
             'name' => trim($this->data['unit']),
         ]);

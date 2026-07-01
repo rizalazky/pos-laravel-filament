@@ -69,6 +69,15 @@ class ProductImporter extends Importer
     protected function afterSave(): void
     {
         // 4. Cek Unit: Jika nama sudah ada, ambil. Jika belum ada, buat baru otomatis.
+        if( !isset($this->data['unit']) || empty(trim($this->data['unit'])) ) {
+            // remove product if unit is empty, because we cannot save product without unit
+            $this->record->delete();
+            return; // Jika unit kosong, tidak perlu diproses
+        }
+
+        // penghapusan units yang sudah ada untuk produk ini sebelum menambahkan unit baru
+        $this->record->units()->delete();
+
         $unit = Unit::firstOrCreate([
             'name' => trim($this->data['unit']),
         ]);

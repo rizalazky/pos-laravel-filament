@@ -171,6 +171,7 @@ class SaleForm
                 TextInput::make('total_payment')
                             // ->mask(RawJs::make('$money($input)'))
                             ->numeric()
+                            ->required()
                             ->live(onBlur: false)
                             ->reactive()
                             ->required(),

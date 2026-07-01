@@ -77,6 +77,7 @@ class PurchaseForm
                     ->default(0),
                 TextInput::make('total_paid')
                             ->label('Total Payment')
+                            ->required()
                             // ->mask(RawJs::make('$money($input)'))
                             ->numeric()
                             ->live(onBlur: false)

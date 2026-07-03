@@ -55,7 +55,15 @@ class PurchaseForm
                     ->relationship('supplier', 'name')
                     ->live()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->createOptionForm([
+                        TextInput::make('name')
+                            ->required(),
+                        TextInput::make('phone_number')
+                            ->required()
+                            ->tel(),
+                        Textarea::make('address')
+                    ]),
                 
                 TextInput::make('total')
                     ->disabled()

@@ -55,7 +55,14 @@ class SaleForm
                     ->relationship('customer', 'name')
                     ->live()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->createOptionForm([
+                        TextInput::make('name')
+                            ->required(),
+                        TextInput::make('phone_number')
+                            ->required()
+                            ->tel(),
+                    ]),
 
                 
 

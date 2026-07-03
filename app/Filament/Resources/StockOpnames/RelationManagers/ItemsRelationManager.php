@@ -64,6 +64,7 @@ class ItemsRelationManager extends RelationManager
                 TextColumn::make('product.name')->label('Product')->searchable(),
                 TextColumn::make('system_stock'),
                 TextInputColumn::make('physical_stock')
+                    ->disabled($this->pageClass === 'App\Filament\Resources\StockOpnames\Pages\ViewStockOpname')
                     ->inputMode('numeric'),
 
                 TextColumn::make('difference')

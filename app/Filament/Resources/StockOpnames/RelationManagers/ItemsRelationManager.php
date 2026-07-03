@@ -14,6 +14,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextInputColumn;
+use App\Models\Product;
+use App\Models\StockOpnameItem;
 
 class ItemsRelationManager extends RelationManager
 {
@@ -25,7 +27,15 @@ class ItemsRelationManager extends RelationManager
             ->components([
                 Select::make('product_id')
                     ->relationship('product', 'name')
-                    ->disabled(),
+                    ->required()
+                    ->searchable()
+                    ->getSearchResultsUsing(fn (string $search): array => Product::query()
+                        ->where('name', 'like', "%{$search}%")
+                        ->orwhere('sku', 'like', "%{$search}%")
+                        ->limit(50)
+                        ->pluck('name', 'id')
+                        ->all()
+                    ),
 
                 TextInput::make('system_stock')
                     ->numeric()
@@ -51,7 +61,7 @@ class ItemsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('stockopname items')
             ->columns([
-                TextColumn::make('product.name')->label('Product'),
+                TextColumn::make('product.name')->label('Product')->searchable(),
                 TextColumn::make('system_stock'),
                 TextInputColumn::make('physical_stock')
                     ->inputMode('numeric'),
@@ -67,7 +77,49 @@ class ItemsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->label('Add Item')
+                    ->form([
+                        Select::make('product_id')
+                            ->label('Product')
+                            ->relationship('product', 'name')
+                            ->searchable()
+                            ->searchPrompt('Search products by their name or SKU')
+                            ->getSearchResultsUsing(fn (string $search): array => Product::query()
+                                ->where('name', 'like', "%{$search}%")
+                                ->orwhere('sku', 'like', "%{$search}%")
+                                ->limit(50)
+                                ->pluck('name', 'id')
+                                ->all()
+                            )
+                            ->preload()
+                            ->required()
+                            ->rules([
+                                function () {
+                                    return function ($attribute, $value, $fail) {
+                                        $exists = StockOpnameItem::query()
+                                            ->where('stock_opname_id', $this->getOwnerRecord()->id)
+                                            ->where('product_id', $value)
+                                            ->exists();
+
+                                        if ($exists) {
+                                            $fail('Product already exists in this stock opname.');
+                                        }
+                                    };
+                                },
+                            ]),
+                    ])
+                    ->mutateDataUsing(function (array $data) {
+
+                        $product = Product::findOrFail($data['product_id']);
+
+                        return [
+                            'product_id'     => $product->id,
+                            'system_stock'   => $product->stock,
+                            'physical_stock' => $product->stock,
+                            'difference'     => 0,
+                        ];
+                    }),
             ])
             ->recordActions([
                 // EditAction::make(),

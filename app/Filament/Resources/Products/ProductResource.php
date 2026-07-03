@@ -168,6 +168,7 @@ class ProductResource extends Resource
         return [
             //
             'variants' => RelationManagers\VariantsRelationManager::class,
+            'suppliers' => RelationManagers\ProductSupplierRelationManager::class,
         ];
     }
 

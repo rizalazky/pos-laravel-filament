@@ -13,9 +13,16 @@ class EditProduct extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            $this->getSaveFormAction()
+                ->formId('form'),
             DeleteAction::make(),
         ];
     }
+
+    protected function getFormActions(): array
+{
+    return [];
+}
 
     // protected function mutateFormDataBeforeFill(array $data): array
     // {

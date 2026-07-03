@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage; // <--- ADD THIS LINE
-
+use App\Models\PurchaseItem;
 
 class Product extends Model
 {
@@ -50,6 +51,28 @@ class Product extends Model
     public function units(): HasMany
     {
         return $this->hasMany(ProductUnit::class);
+    }
+
+
+    public function suppliers(): BelongsToMany
+    {
+        return $this->belongsToMany(Supplier::class)
+            ->withPivot([
+                'supplier_sku',
+                'is_default',
+            ])
+            ->withTimestamps();
+    }
+
+    public function latestPurchaseFromSupplier(Supplier $supplier): ?PurchaseItem
+    {
+        return PurchaseItem::query()
+            ->where('product_id', $this->id)
+            ->whereHas('purchase', function ($query) use ($supplier) {
+                $query->where('supplier_id', $supplier->id);
+            })
+            ->latest()
+            ->first();
     }
 
     public function baseUnit()

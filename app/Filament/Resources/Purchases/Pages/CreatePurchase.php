@@ -15,6 +15,32 @@ class CreatePurchase extends CreateRecord
 {
     protected static string $resource = PurchaseResource::class;
 
+    public function mount(): void
+    {
+
+        $supplierId = request()->query('supplier_id');
+        $productId = request()->query('product_id');
+        $data = [];
+
+        if ($supplierId) {
+            $data['supplier_id'] = $supplierId;
+        }
+
+        if ($productId) {
+            $product = \App\Models\Product::find($productId);
+
+            $data['items'] = [
+                [
+                    'product_id' => $productId,
+                    'unit_id' => $product ? $product->baseUnit->unit_id : null,
+                    'quantity' => 1,
+                    'price' => $product ? $product->baseUnit->cost_price : 0,
+                ],
+            ];
+        }
+
+        $this->form->fill($data);
+    }
     protected function handleRecordCreation(array $data): Model
     {
         return app(PurchaseService::class)->create($data);

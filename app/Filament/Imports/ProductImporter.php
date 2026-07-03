@@ -74,13 +74,6 @@ class ProductImporter extends Importer
 
     protected function afterSave(): void
     {
-       
-        // if( !isset($this->data['unit']) || empty(trim($this->data['unit'])) ) {
-        //     // remove product if unit is empty, because we cannot save product without unit
-        //     $this->record->delete();
-        //     return; // Jika unit kosong, tidak perlu diproses
-        // }
-
         // penghapusan units yang sudah ada untuk produk ini sebelum menambahkan unit baru
         $this->record->units()->delete();
          // 4. Cek Unit: Jika nama sudah ada, ambil. Jika belum ada, buat baru otomatis.
@@ -102,6 +95,8 @@ class ProductImporter extends Importer
                 'is_active'       => true,
             ]
         );
+
+        // create initial stock for the product if it doesn't exist via stock opname
     }
 
     public static function getCompletedNotificationBody(Import $import): string

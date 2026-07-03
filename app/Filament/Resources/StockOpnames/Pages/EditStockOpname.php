@@ -61,7 +61,33 @@ class EditStockOpname extends EditRecord
                             ->success()
                             ->send();
                     }),
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->visible(fn ($record) => $record->status === 'draft')
+                ->requiresConfirmation()
+                ->action(function ($record) {
+
+                    $stockService = app(StockService::class);
+
+                    \DB::transaction(function () use ($record, $stockService) {
+
+                        // kalau sudah completed → rollback dulu
+                        if ($record->status === 'completed') {
+
+                            $stockService->rollbackByReference(
+                                'stock_opname',
+                                $record->id
+                            );
+                        }
+
+                        // baru delete opname
+                        $record->delete();
+                    });
+
+                    Notification::make()
+                        ->title('Stock Opname berhasil dihapus & rollback')
+                        ->success()
+                        ->send();
+                }),
         ];
     }
 }

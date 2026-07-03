@@ -28,7 +28,7 @@ class StockOpnamesTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()->visible(fn ($record) => $record->status === 'draft'),
                 Action::make('submit')
                     ->label('Submit')
                     ->color('success')
@@ -75,6 +75,7 @@ class StockOpnamesTable
                             ->send();
                     }),
                 DeleteAction::make()
+                    ->visible(fn ($record) => $record->status === 'draft')
                     ->requiresConfirmation()
                     ->action(function ($record) {
 

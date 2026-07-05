@@ -128,10 +128,6 @@
                                         <h4 class="font-semibold text-sm text-gray-800 dark:text-gray-200 line-clamp-2">
                                             {{ $product->name }}
                                         </h4>
-
-                                        <span class="text-xs text-gray-400">
-                                            SKU: {{ $product->sku ?? '-' }}
-                                        </span>
                                     </div>
 
                                     <div class="flex justify-between items-center mt-2">

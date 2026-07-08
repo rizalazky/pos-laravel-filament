@@ -23,6 +23,8 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\FileUpload;
+use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Support\Str;
 
 
 class ProductResource extends Resource
@@ -67,6 +69,8 @@ class ProductResource extends Resource
             
             TextInput::make('name')
                 ->required()
+                ->live(onBlur: true)
+                ->afterStateUpdated(fn (Set $set, ?string $state) => $set('sku', Str::slug($state)))
                 ->maxLength(255),
 
             Select::make('parent_id')
@@ -84,6 +88,7 @@ class ProductResource extends Resource
 
             TextInput::make('sku')
                 ->unique(ignoreRecord: true)
+                ->required()
                 ->maxLength(100),
             
             FileUpload::make('image')

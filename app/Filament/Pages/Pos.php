@@ -9,6 +9,7 @@ use Filament\Support\Enums\Width;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use App\Models\Product;
+use App\Models\Company;
 use App\Services\SaleService;
 use Illuminate\Support\Str;
 use Filament\Notifications\Notification;
@@ -58,8 +59,13 @@ class Pos extends Page
     public function getProductsProperty()
     {
         // Query dasar bawaan kamu
-        $query = Product::where('is_active', true)
-            ->where('stock', '>', 0);
+        $query = Product::where('is_active', true);
+
+        $company = Company::first();
+        if(!$company->allow_negative_stock){
+            $query->where('stock', '>', 0);
+        }
+
 
         if ($this->searchMode === 'search' && !empty($this->search)) {
             $query->where(function($q) {

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\ProductUnit;
+use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -94,8 +95,9 @@ class StockService
         ) {
             $rate = $this->getConversionRate($product, $unitId);
             $baseQty = $qty * $rate;
-
-            if ($product->stock < $baseQty) {
+            $company = Company::first();
+            $allow_negative_stock = $company->allow_negative_stock;
+            if (!$allow_negative_stock && $product->stock < $baseQty) {
                 throw new Exception('Stock not enough.');
             }
 

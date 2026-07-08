@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use BackedEnum;
 use UnitEnum;
@@ -40,6 +41,7 @@ class CompanyPage extends Page
                         ->maxLength(255),
                     Textarea::make('address'),
                     TextInput::make('phone'),
+                    Toggle::make('allow_negative_stock')
                 ])
                     ->livewireSubmitHandler('save')
                     ->footer([

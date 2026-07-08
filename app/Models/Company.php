@@ -15,5 +15,6 @@ class Company extends Model
         'facebook_link',
         'linkedin_link',
         'logo',
+        'allow_negative_stock'
     ];
 }

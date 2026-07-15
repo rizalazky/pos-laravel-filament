@@ -85,13 +85,18 @@ class Pos extends Page
         if ($this->searchMode === 'search') return;
 
         // Logika cari produk otomatis untuk scan barcode kamu tetap sama di bawah ini
-        $product = Product::where('is_active', true)
+        $query = Product::where('is_active', true)
             ->where(function($q) {
                 $q->where('sku', $this->search) 
                 ->orWhere('name', $this->search); // Untuk scan, sebaiknya match persis
-            })
-            ->where('stock', '>', 0)
-            ->first();
+            });
+        
+        $company = Company::first();
+        if(!$company->allow_negative_stock){
+            $query->where('stock', '>', 0);
+        }
+
+        $product = $query->first();
 
         if ($product) {
             $this->addToCart($product->id);

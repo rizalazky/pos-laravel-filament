@@ -210,7 +210,15 @@ class SaleForm
                             ->options(Product::pluck('name', 'id'))
                             ->searchable()
                             ->reactive()
-                            ->afterStateUpdated(fn ($set) => $set('unit_id', null))
+                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                $product = Product::find($state);
+
+                                if (! $product) {
+                                    return;
+                                }
+                                // $set('unit_id', $productUnit->unit_id ?? null);
+                                $set('price', $product->baseUnit->sell_price ?? 0);    
+                            })
                             ->required(),
 
                         Select::make('unit_id')
@@ -256,6 +264,7 @@ class SaleForm
                                 $set('stock', $availableStock);
                             })
                             ->disabled(fn (Get $get) => ! $get('product_id'))
+                            ->selectablePlaceholder(false)
                             ->required(),
 
 

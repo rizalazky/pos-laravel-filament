@@ -13,5 +13,9 @@ class ReceiptPrintService
         ])->setPaper([0, 0, 226.77, 600]); // 58mm
 
         return $pdf->stream('receipt.pdf');
+        // return view('receipt.print', [
+        //     'sale' => $sale,
+        //     'company' => $company
+        // ]);
     }
 }

@@ -1,6 +1,6 @@
 <x-filament-panels::page>
     <div class="mb-4 flex justify-end">
-        <form method="POST" action="{{ route('print.receipt') }}">
+        <form method="POST" action="{{ route('print.receipt') }}" target="_blank">
             @csrf
             <input type="hidden" name="sale_id" value="{{ $record->id }}">
             <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded">

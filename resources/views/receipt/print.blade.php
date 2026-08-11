@@ -95,6 +95,19 @@
 <div class="center">
     Terima kasih
 </div>
-
+<script>
+    window.onload = function() {
+        // Trigger perintah print saat halaman selesai di-load
+        // window.print();
+        console.log("Print command triggered.");
+        // Beri sedikit jeda agar proses print berjalan, lalu tutup tab
+        // setTimeout(function() {
+        //     window.close();
+        // }, 500); // 500ms / 0.5 detik
+    };
+    window.onafterprint = function() {
+        window.close();
+    };
+</script>
 </body>
 </html>

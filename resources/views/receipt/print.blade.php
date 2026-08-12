@@ -94,6 +94,8 @@
 
 <div class="center">
     Terima kasih
+    <br/>
+    <small>Barang yang sudah dibeli tidak dapat ditukar atau dikembalikan, kecuali dengan perjanjian.</small>
 </div>
 <script>
     window.onload = function() {
